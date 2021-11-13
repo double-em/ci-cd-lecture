@@ -19,7 +19,7 @@ First we need to containerize our application to make sure we have the same repr
 	1. Choose Linux if using Linux containers i.e. WSL or Hyper-V (Recommended)
 	2. Choose Windows if using Windows containers i.e. Hyper-V
 7. You should now have something matching the picture below:
-![Pasted image 20211113114552](https://user-images.githubusercontent.com/8335996/141644626-d2751797-6dd7-4c29-907e-c5617e7a62bf.png)
+![Pasted image 20211113114745](https://user-images.githubusercontent.com/8335996/141644653-8db0f4ea-5484-4524-be22-97f814f127d0.png)
 8. Press `Create`.
 
 
