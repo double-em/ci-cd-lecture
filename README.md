@@ -38,7 +38,7 @@ Create the project inside the solution folder:
 dotnet new webapi -o MyWebApi
 ```
 
-Create a `Dockerfile` in the project directory with the contents from [[#The Docker file]] section.
+Create a `Dockerfile` in the project directory with the contents from [The Dockerfile](#the-dockerfile) section.
 
 ### The Dockerfile
 You should now have the following Dockerfile in your project directory:
