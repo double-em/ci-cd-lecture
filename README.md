@@ -1,6 +1,6 @@
 
 # The GitHub CI/CD guide for .NET 5/6
-1. [Creating a Containerized NET App](#1-creating-a-containerized-net-app)
+1. [Creating a Containerized .NET App](#1-creating-a-containerized-net-app)
 1. [The Build & Publish Pipeline](#2-the-build-&-publish-pipeline)
 1. [Running Tests as part of the Pipeline](#3-running-tests-as-part-of-the-pipeline)
 1. [Splitting up Pipelines](#4-splitting-up-pipelines)
@@ -19,7 +19,7 @@ First we need to containerize our application to make sure we have the same repr
 	1. Choose Linux if using Linux containers i.e. WSL or Hyper-V (Recommended)
 	2. Choose Windows if using Windows containers i.e. Hyper-V
 7. You should now have something matching the picture below:
-![[Pasted image 20211113114745.png]]
+![Pasted image 20211113114552](https://user-images.githubusercontent.com/8335996/141644626-d2751797-6dd7-4c29-907e-c5617e7a62bf.png)
 8. Press `Create`.
 
 
