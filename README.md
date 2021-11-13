@@ -42,7 +42,7 @@ Create a `Dockerfile` in the project directory with the contents from [[#The Doc
 
 ### The Dockerfile
 You should now have the following Dockerfile in your project directory:
-```dockerfile:MyWebApi/Dockerfile
+```dockerfile
 FROM mcr.microsoft.com/dotnet/aspnet:5.0 AS base
 WORKDIR /app
 EXPOSE 80
@@ -66,7 +66,7 @@ ENTRYPOINT ["dotnet", "MyApi.dll"]
 ```
 
 #### Base
-```dockerfile:MyWebApi/Dockerfile
+```dockerfile
 FROM mcr.microsoft.com/dotnet/aspnet:5.0 AS base
 WORKDIR /app
 EXPOSE 80
@@ -78,7 +78,7 @@ EXPOSE 443
 This is the base of which our image is build upon.
 
 #### Build
-```dockerfile:MyWebApi/Dockerfile
+```dockerfile
 ...
 
 FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
@@ -96,7 +96,7 @@ Here we first copy the `MyWebApi.csproj` project file and then restore our NuGet
 We then copy the entire solution to our image and then builds the Release version of our application.
 
 #### Publish
-```dockerfile:MyWebApi/Dockerfile
+```dockerfile
 ...
 
 FROM build AS publish
@@ -108,7 +108,7 @@ RUN dotnet publish "MyApi.csproj" -c Release -o /app/publish
 Here we make dotnet publish our application which builds and optimizes our code and artifacts ready to release.
 
 #### Final
-```dockerfile:MyWebApi/Dockerfile
+```dockerfile
 ...
 
 FROM base AS final
