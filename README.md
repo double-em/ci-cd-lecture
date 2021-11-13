@@ -1,7 +1,7 @@
 
 # The GitHub CI/CD guide for .NET 5/6
 1. [Creating a Containerized .NET App](#1-creating-a-containerized-net-app)
-1. [The Build & Publish Pipeline](#2-the-build-&-publish-pipeline)
+1. [The Build & Publish Pipeline](#2-the-build--publish-pipeline)
 1. [Running Tests as part of the Pipeline](#3-running-tests-as-part-of-the-pipeline)
 1. [Splitting up Pipelines](#4-splitting-up-pipelines)
 
