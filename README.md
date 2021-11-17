@@ -1,6 +1,6 @@
 # The GitHub CI/CD guide for .NET 5/6
 1. [Creating a Containerized .NET App](#1-creating-a-containerized-NET-App)
-1. [The Build & Publish Pipeline](#2-the-build--publish-pipelined)
+1. [The Build & Publish Pipeline](#2-the-build--publish-pipeline)
 1. [Running Tests as part of the Pipeline](#3-running-tests-as-part-of-the-pipeline)
 
 ---
@@ -36,7 +36,7 @@ cd ci-cd-lecture
 ```
 
 Create the project inside the solution folder:
-```shell:
+```shell
 dotnet new webapi -o MyWebApi
 ```
 
@@ -44,7 +44,7 @@ Create a `Dockerfile` in the project directory with the contents from [[#The Doc
 
 ### The Dockerfile
 You should now have the following Dockerfile in your project directory:
-```dockerfile:MyWebApi/Dockerfile
+```dockerfile
 FROM mcr.microsoft.com/dotnet/aspnet:5.0 AS base
 WORKDIR /app
 EXPOSE 80
@@ -68,7 +68,7 @@ ENTRYPOINT ["dotnet", "MyApi.dll"]
 ```
 
 #### Base
-```dockerfile:MyWebApi/Dockerfile
+```dockerfile
 FROM mcr.microsoft.com/dotnet/aspnet:5.0 AS base
 WORKDIR /app
 EXPOSE 80
@@ -80,7 +80,7 @@ EXPOSE 443
 This is the base of which our image is build upon.
 
 #### Build
-```dockerfile:MyWebApi/Dockerfile
+```dockerfile
 ...
 
 FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
@@ -98,7 +98,7 @@ Here we first copy the `MyWebApi.csproj` project file and then restore our NuGet
 We then copy the entire solution to our image and then builds the Release version of our application.
 
 #### Publish
-```dockerfile:MyWebApi/Dockerfile
+```dockerfile
 ...
 
 FROM build AS publish
@@ -110,7 +110,7 @@ RUN dotnet publish "MyApi.csproj" -c Release -o /app/publish
 Here we make dotnet publish our application which builds and optimizes our code and artifacts ready to release.
 
 #### Final
-```dockerfile:MyWebApi/Dockerfile
+```dockerfile
 ...
 
 FROM base AS final
@@ -144,7 +144,7 @@ Press `Ctrl+C` in the terminal to stop the container.
 We are going to use GitHub Actions in this example for simplicity and easy access for everyone, but the general concepts apply to all CI/CD pipeline tools.
 
 ### Building the Image
-```yaml:.github/workflows/build-pipeline.yml
+```yaml
 name: Image Build Pipeline
 
 on:
@@ -171,65 +171,50 @@ If you go to the `Actions` tab in the GitHub repository, you should see somethin
 ![Pasted image 20211117182211](https://user-images.githubusercontent.com/8335996/142278013-b70f3a6d-43ed-4b74-95fe-0df9cba3755f.png)
 
 ### Extending the Pipeline with Publishing
-```yaml:.github/workflows/build-pipeline.yml
+```yaml
 name: Image Build Pipeline
 
 on:
   push:
     branches: [ main ]
-    tags: [ 'v*.*.*' ]
   pull_request:
     branches: [ main ]
 
 env:
-  REGISTRY: ghcr.io
+  REGISTRY: ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name}}
   IMAGE_NAME: myapi
 
 
 jobs:
-  build:
 
+  build-publish:
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
-
+    
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-		
-	  - name: Build MyApi image
-      	run: docker build . --file MyApi/Dockerfile --tag ${{ env.IMAGE_NAME }}:$(date +%s)
-  
-  publish:
-    
-	runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-	
-	steps:
+
+      - name: Docker Setup Buildx
+        uses: docker/setup-buildx-action@v1.6.0
+            
       - name: Log into registry ${{ env.REGISTRY }}
         if: github.event_name != 'pull_request'
-        uses: docker/login-action@28218f9b04b4f3f62068d7b6ce6ca5b26e35336c
+        uses: docker/login-action@v1.10.0
         with:
           registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
+          username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Extract Docker metadata
-        id: meta
-        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-
-      - name: Build and push Docker image
-        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
-        with:
-          context: .
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          
+      - name: Build Image
+        run: |
+          docker build -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest -f MyApi/Dockerfile .
+      - name: Push Image
+        if: github.event_name != 'pull_request'
+        run: |
+          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
 ```
 
 #### Test it out!
@@ -331,3 +316,5 @@ public bool ReturnTrue()
 Make a new commit and push it to the main branch.  
 You should now see it fail and if we look in the log you should see something familiar to the following image:
 ![failing-test](https://user-images.githubusercontent.com/8335996/142278041-4af6ca3d-4390-4dc8-ba19-5bfd2e7b5b09.png)
+
+## Done!
