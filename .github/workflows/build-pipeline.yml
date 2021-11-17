@@ -12,11 +12,8 @@ env:
 
 
 jobs:
-  test:
 
-    runs-on: ubuntu-latest
-
-  publish:
+  build-publish:
     runs-on: ubuntu-latest
     permissions:
       contents: read
