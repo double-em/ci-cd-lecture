@@ -87,14 +87,18 @@ jobs:
           docker build -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest -f MyApi/Dockerfile --cache-from=type=local,src=/tmp/.buildx-cache .
           docker rmi $(docker images -f "dangling=true" -q)
 
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v2
-        with:
-          context: ./MyApi/Dockerfile
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
-          cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,dest=/tmp/.buildx-cache-new
+      - name: Push Image
+        run: |
+          docker push -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+        
+#       - name: Build and push Docker image
+#         uses: docker/build-push-action@v2
+#         with:
+#           context: ./MyApi/Dockerfile
+#           push: ${{ github.event_name != 'pull_request' }}
+#           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+#           cache-from: type=local,src=/tmp/.buildx-cache
+#           cache-to: type=local,dest=/tmp/.buildx-cache-new
           
 #       - name: Move cache
 #         run: |
