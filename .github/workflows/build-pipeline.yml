@@ -7,41 +7,16 @@ on:
     branches: [ main ]
 
 env:
-  REGISTRY: ghcr.io/${{ github.repository_owner }}/ci-cd-lecture
+  REGISTRY: ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name}}
   IMAGE_NAME: myapi
 
 
 jobs:
-#   build:
+  test:
 
-#     runs-on: ubuntu-latest
-#     permissions:
-#       contents: read
-#       packages: write
+    runs-on: ubuntu-latest
 
-#     steps:
-#       - name: Checkout repository
-#         uses: actions/checkout@v2
-        
-#       - name: Docker Setup Buildx
-#         uses: docker/setup-buildx-action@v1.6.0
-        
-#       - name: Cache Docker Layers
-#         uses: actions/cache@v2.1.6
-#         with:
-#           # A list of files, directories, and wildcard patterns to cache and restore
-#           path: /tmp/.buildx-cache
-#           # An explicit key for restoring and saving the cache
-#           key:  ${{ runner.os }}-buildx-${{ github.sha }}
-#           # An ordered list of keys to use for restoring the cache if no cache hit occurred for key
-#           restore-keys: |
-#             ${{ runner.os }}-buildx-
-        
-#       - name: Build MyApi image
-#         run: docker build . --file MyApi/Dockerfile --tag ${{ env.IMAGE_NAME }}:$(date +%s)
-  
   publish:
-#     needs: [build]
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -58,21 +33,10 @@ jobs:
       - name: Cache Docker Layers
         uses: actions/cache@v2.1.6
         with:
-          # A list of files, directories, and wildcard patterns to cache and restore
           path: /tmp/.buildx-cache
-          # An explicit key for restoring and saving the cache
           key:  ${{ runner.os }}-buildx-${{ github.sha }}
-          # An ordered list of keys to use for restoring the cache if no cache hit occurred for key
           restore-keys: |
             ${{ runner.os }}-buildx-
-            
-      - name: Inspect builder
-        run: |
-          echo "Name:      ${{ steps.buildx.outputs.name }}"
-          echo "Endpoint:  ${{ steps.buildx.outputs.endpoint }}"
-          echo "Status:    ${{ steps.buildx.outputs.status }}"
-          echo "Flags:     ${{ steps.buildx.outputs.flags }}"
-          echo "Platforms: ${{ steps.buildx.outputs.platforms }}"
             
       - name: Log into registry ${{ env.REGISTRY }}
         if: github.event_name != 'pull_request'
@@ -90,17 +54,3 @@ jobs:
       - name: Push Image
         run: |
           docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
-        
-#       - name: Build and push Docker image
-#         uses: docker/build-push-action@v2
-#         with:
-#           context: ./MyApi/Dockerfile
-#           push: ${{ github.event_name != 'pull_request' }}
-#           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
-#           cache-from: type=local,src=/tmp/.buildx-cache
-#           cache-to: type=local,dest=/tmp/.buildx-cache-new
-          
-#       - name: Move cache
-#         run: |
-#           rm -rf /tmp/.buildx-cache
-#           mv /tmp/.buildx-cache-new /tmp/.buildx-cache
