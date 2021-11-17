@@ -28,7 +28,7 @@ jobs:
         run: docker build . --file MyApi/Dockerfile --tag ${{ env.IMAGE_NAME }}:$(date +%s)
   
   publish:
-    if: success()
+    needs: [build]
     runs-on: ubuntu-latest
     permissions:
       contents: read
