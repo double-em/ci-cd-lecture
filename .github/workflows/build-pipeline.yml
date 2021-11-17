@@ -3,12 +3,11 @@ name: Image Build Pipeline
 on:
   push:
     branches: [ main ]
-    tags: [ 'v*.*.*' ]
   pull_request:
     branches: [ main ]
 
 env:
-  REGISTRY: ghcr.io
+  REGISTRY: ghcr.io/ci-cd-lecture
   IMAGE_NAME: myapi
 
 
@@ -79,7 +78,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v3.6.0
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v2
