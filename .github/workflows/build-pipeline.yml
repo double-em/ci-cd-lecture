@@ -52,5 +52,6 @@ jobs:
           docker rmi $(docker images -f "dangling=true" -q)
 
       - name: Push Image
+        if: github.event_name != 'pull_request'
         run: |
           docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
