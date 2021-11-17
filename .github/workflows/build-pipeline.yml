@@ -84,7 +84,8 @@ jobs:
           
       - name: Build Image
         run: |
-          docker build -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest -f MyApi/Dockerfile --cache-from=type=local,src=/tmp/.buildx-cache --cache-to=type=local,dest=/tmp/.buildx-cache-new .
+          docker build -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest -f MyApi/Dockerfile --cache-from=type=local,src=/tmp/.buildx-cache .
+          docker rmi $(docker images -f "dangling=true" -q)
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v2
@@ -95,7 +96,7 @@ jobs:
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new
           
-      - name: Move cache
-        run: |
-          rm -rf /tmp/.buildx-cache
-          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
+#       - name: Move cache
+#         run: |
+#           rm -rf /tmp/.buildx-cache
+#           mv /tmp/.buildx-cache-new /tmp/.buildx-cache
