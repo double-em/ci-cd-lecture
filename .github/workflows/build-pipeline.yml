@@ -1,4 +1,4 @@
-name: Docker
+name: Image Build Pipeline
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
+  IMAGE_NAME: myapi
 
 
 jobs:
@@ -23,7 +23,18 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-
+        
+      - name: Build MyApi image
+        run: docker build . --file MyApi/Dockerfile --tag ${{ env.IMAGE_NAME }}:$(date +%s)
+  
+  publish:
+    
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    
+    steps:
       - name: Log into registry ${{ env.REGISTRY }}
         if: github.event_name != 'pull_request'
         uses: docker/login-action@28218f9b04b4f3f62068d7b6ce6ca5b26e35336c
