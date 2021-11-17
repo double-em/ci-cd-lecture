@@ -35,5 +35,10 @@ namespace MyApi.Controllers
                 })
                 .ToArray();
         }
+
+        public bool ReturnTrue()
+        {
+            return true;
+        }
     }
 }
