@@ -38,7 +38,7 @@ namespace MyApi.Controllers
 
         public bool ReturnTrue()
         {
-            return true;
+            return false;
         }
     }
 }
